@@ -6,6 +6,7 @@ import org.apache.reef.driver.evaluator.AllocatedEvaluator;
 import org.apache.reef.driver.evaluator.EvaluatorRequest;
 import org.apache.reef.driver.evaluator.EvaluatorRequestor;
 import org.apache.reef.driver.task.TaskConfiguration;
+import org.apache.reef.tang.Tang;
 import org.apache.reef.tang.Configuration;
 import org.apache.reef.tang.annotations.Unit;
 import org.apache.reef.wake.EventHandler;
@@ -13,6 +14,7 @@ import org.apache.reef.wake.time.event.StartTime;
 
 import javax.inject.Inject;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Random;
 
 @Unit
 public final class PrimeDriver {
@@ -56,8 +58,19 @@ public final class PrimeDriver {
       final String taskId = "PrimeTask-" + taskIndex;
       final Configuration taskConfiguration = TaskConfiguration.CONF
           .set(TaskConfiguration.IDENTIFIER, taskId)
+          .set(TaskConfiguration.TASK, PrimeTask.class)
           .build();
-      activeContext.submitTask(taskConfiguration);
+
+      // passing parameter
+
+      //activeContext.submitTask(taskConfiguration);
+      Random random = new Random();
+      int rint = random.nextInt(1000000000);
+      activeContext.submitTask(Tang.Factory.getTang()
+        .newConfigurationBuilder(taskConfiguration)
+        .bindNamedParameter(TaskConfiguration.class,
+          String.valueOf(rint))
+        .build());
     }
   }
 }
