@@ -10,15 +10,20 @@ public final class PrimeTask implements Task {
 
   private int n;
 
-/*
+
   @Inject
   public PrimeTask() {
     this.n = 450619297;
   }
-*/
+
   @Inject
   public PrimeTask(@Parameter(PrimeParameter.class) final int parameter) {
     this.n = parameter;
+  }
+
+  @Inject
+  public PrimeTask(final RandomGenerator randomGenerator) {
+    this.n = randomGenerator.getRandom();
   }
 
   @Override

@@ -6,6 +6,7 @@ import org.apache.reef.driver.evaluator.AllocatedEvaluator;
 import org.apache.reef.driver.evaluator.EvaluatorRequest;
 import org.apache.reef.driver.evaluator.EvaluatorRequestor;
 import org.apache.reef.driver.task.TaskConfiguration;
+import org.apache.reef.driver.context.ServiceConfiguration;
 import org.apache.reef.tang.Tang;
 import org.apache.reef.tang.Configuration;
 import org.apache.reef.tang.annotations.Unit;
@@ -46,7 +47,13 @@ public final class PrimeDriver {
       final Configuration contextConfiguration = ContextConfiguration.CONF
           .set(ContextConfiguration.IDENTIFIER, contextId)
           .build();
-      allocatedEvaluator.submitContext(contextConfiguration);
+      //allocatedEvaluator.submitContext(contextConfiguration);
+      
+      // 4
+      Configuration serviceConf = ServiceConfiguration.CONF
+        .set(ServiceConfiguration.SERVICES, RandomGenerator.class)
+        .build();
+      allocatedEvaluator.submitContextAndService(contextConfiguration, serviceConf);
     }
   }
 
@@ -63,14 +70,14 @@ public final class PrimeDriver {
 
       // passing parameter
 
-      //activeContext.submitTask(taskConfiguration);
+      activeContext.submitTask(taskConfiguration);
+      /*
       Random random = new Random();
       int rint = random.nextInt(1000000000);
       activeContext.submitTask(Tang.Factory.getTang()
         .newConfigurationBuilder(taskConfiguration)
-        .bindNamedParameter(TaskConfiguration.class,
-          String.valueOf(rint))
-        .build());
+        .bindNamedParameter(PrimeParameter.class, String.valueOf(rint))
+        .build());*/
     }
   }
 }
